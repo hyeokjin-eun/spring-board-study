@@ -1,4 +1,4 @@
-package com.study.board.model.dto.response;
+package com.study.board.model.dto.response.board;
 
 import lombok.*;
 

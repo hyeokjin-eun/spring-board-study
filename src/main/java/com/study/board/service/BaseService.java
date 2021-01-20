@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public abstract class BaseService<Entity, ListRes> implements CurdInterface<ListRes> {
+public abstract class BaseService<Entity, CreateReq, UpdateReq, ListRes, CreateRes, UpdateRes, DeleteRes, DetailRes> implements CurdInterface<CreateReq, UpdateReq, ListRes, CreateRes, UpdateRes, DeleteRes, DetailRes> {
 
     @Autowired(required = false)
     protected JpaRepository<Entity, Long> baseRepository;

@@ -1,11 +1,13 @@
 package com.study.board.controller;
 
-import com.study.board.model.dto.response.BoardListResponseDto;
+import com.study.board.model.dto.request.board.BoardCreateRequestDto;
+import com.study.board.model.dto.request.board.BoardUpdateRequestDto;
+import com.study.board.model.dto.response.board.*;
 import com.study.board.model.entity.Board;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("board")
-public class BoardController extends BaseController<Board, BoardListResponseDto>{
+public class BoardController extends BaseController<Board, BoardCreateRequestDto, BoardUpdateRequestDto, BoardListResponseDto, BoardCreateResponseDto, BoardUpdateResponseDto, BoardDeleteResponseDto, BoardDetailResponseDto>{
 }

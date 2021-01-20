@@ -1,10 +1,7 @@
 package com.study.board.model.entity;
 
 import com.study.board.model.enumClass.BoardStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Accessors(chain = true)
+@ToString
 public class Board {
 
     @Id
