@@ -1,0 +1,122 @@
+@charset "utf-8";
+
+html {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+}
+
+body {
+    overflow-x: hidden;
+    color: rgb(29, 29, 31);
+    letter-spacing: -0.05em;
+    background: white;
+}
+
+p {
+    line-height: 1.6;
+}
+
+a {
+    color: rgb(29, 29, 31);
+    text-decoration: none;
+}
+
+.container {
+    overflow-x: hidden;
+}
+
+.home-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    width: 100%;
+    height: 52px;
+    padding: 0 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.home-nav-links {
+    display: flex;
+    align-items: center;
+    max-width: 1000px;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.home-nav-links .product-name {
+    margin-right: auto;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+.home-nav-links a {
+    font-size: 0.8rem;
+}
+
+.scroll-section {
+    position: relative;
+    padding-top: 50vh;
+}
+
+#scroll-section-0 h1 {
+    position: relative;
+    top: -10vh;
+    z-index: 5;
+    font-size: 4rem;
+    text-align: center;
+    color: white;
+}
+
+#scroll-section-0 .main-message {
+    color: white;
+}
+
+.sticky-elem-canvas {
+    top: 0;
+    height: 100%;
+}
+
+.sticky-elem-canvas canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.main-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 40vh;
+    margin: 5px 0;
+    height: 3em;
+    font-size: 2.5rem;
+    opacity: 0;
+}
+
+.main-message p {
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.sticky-elem {
+    display: none;
+    position: fixed;
+    left: 0;
+    width: 100%;
+}
+
+#show-scene-0 #scroll-section-0 .sticky-elem {
+    display: block;
+}
+
+@media (min-width: 1024px) {
+    #scroll-section-0 h1 {
+        font-size: 9vw;
+    }
+
+    .main-message {
+        font-size: 4vw;
+    }
+}
