@@ -42,7 +42,7 @@ public abstract class BaseController<Entity, CreateReq, UpdateReq, ListRes, Crea
     }
 
     @GetMapping("")
-    public ResponseDto<List<ListRes>> list(@PageableDefault(sort = "seq", direction = Sort.Direction.ASC, size = 20) Pageable pageable) {
+    public ResponseDto<List<ListRes>> list(@PageableDefault(sort = "seq", direction = Sort.Direction.DESC, size = 20) Pageable pageable) {
         return baseService.list(pageable);
     }
 }

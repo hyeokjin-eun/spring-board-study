@@ -12,37 +12,15 @@
                     <img class="my-profile" src="/img/user/user-default.jpg" width="56" height="56">
                 </div>
                 <div class="board-create-area">
-                    <input class="board-create-title" placeholder="글 제목을 입력"/>
-                    <textarea class="board-create-content" placeholder="자신의 일상을 공유보세요"></textarea>
-                    <button class="board-create-btn">
+                    <input class="board-create-title" id="board-create-title" maxlength="32" placeholder="글 제목을 입력"/>
+                    <textarea class="board-create-content" id="board-create-content" placeholder="자신의 일상을 공유보세요"></textarea>
+                    <button class="board-create-btn" id="board-create-btn">
                         게시하기
                     </button>
                 </div>
             </div>
         </div>
         <div class="section-board">
-            <div class="board-content">
-                <div class="board-content-title">
-                    <strong>Title</strong>
-                </div>
-                <div class="board-content-img">
-                    <img class="board-img" src="/img/board/board-default.jpg"/>
-                </div>
-                <div class="board-content-content">
-                    content
-                </div>
-            </div>
-            <div class="board-content">
-                <div class="board-content-title">
-                    <strong>Title</strong>
-                </div>
-                <div class="board-content-img">
-                    <img class="board-img" src="/img/board/board-default.jpg"/>
-                </div>
-                <div class="board-content-content">
-                    content
-                </div>
-            </div>
         </div>
     </div>
     <div class="section-right">
@@ -91,6 +69,22 @@
         </div>
     </div>
 </section>
+
+<div id="modal">
+    <div id="modal-layer">
+        <div class="modal-content" id="modal-content">
+            <div class="board-update-btn-field">
+                <div class="board-update-btn-text modal-btn-field-text">수정</div>
+            </div>
+            <div class="board-delete-btn-field">
+                <div class="board-delete-btn-text modal-btn-field-text">삭제</div>
+            </div>
+            <div class="modal-cancel-field">
+                <div class="modal-cancel-text modal-btn-field-text">취소</div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="/js/board/main.js"></script>
 <script src="/js/board/ajax.js"></script>

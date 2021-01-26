@@ -4,7 +4,6 @@
             sectionHeightNum: 5,
             objs : {
                 container: document.querySelector('#section-content'),
-                boardImgs: document.querySelectorAll('.board-img')
             }
         }
     ]
