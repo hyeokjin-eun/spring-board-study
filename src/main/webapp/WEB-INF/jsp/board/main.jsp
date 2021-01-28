@@ -12,7 +12,7 @@
                     <img class="my-profile" src="/img/user/user-default.jpg" width="56" height="56">
                 </div>
                 <div class="board-create-area">
-                    <input class="board-create-title" id="board-create-title" maxlength="32" placeholder="글 제목을 입력"/>
+                    <input class="board-create-title" id="board-create-title" maxlength="14" placeholder="글 제목을 입력"/>
                     <textarea class="board-create-content" id="board-create-content" placeholder="자신의 일상을 공유보세요"></textarea>
                     <button class="board-create-btn" id="board-create-btn">
                         게시하기

@@ -12,7 +12,7 @@
         document.querySelector(".container").style.minHeight = `${window.innerHeight}px`;
     }
 
-    document.addEventListener('load', () => {
+    window.addEventListener('load', () => {
         setLayout();
     });
 })();

@@ -50,11 +50,16 @@ public class BoardService extends BaseService<Board, BoardCreateRequestDto, Boar
     public ResponseDto<BoardUpdateResponseDto> update(final BoardUpdateRequestDto boardUpdateRequestDto) {
         return baseRepository.findById(boardUpdateRequestDto.getSeq())
                 .map(board -> Board.builder()
+                        .seq(board.getSeq())
                         .title(boardUpdateRequestDto.getTitle())
                         .content(boardUpdateRequestDto.getContent())
                         .status(boardUpdateRequestDto.getStatus())
+                        .created(board.getCreated())
                         .build())
-                .map(board -> baseRepository.save(board))
+                .map(board -> {
+                    System.out.println(board);
+                    return baseRepository.save(board);
+                })
                 .map(board -> ResponseDto.OK(BoardUpdateResponseDto.builder()
                         .seq(board.getSeq())
                         .title(board.getTitle())
@@ -71,7 +76,8 @@ public class BoardService extends BaseService<Board, BoardCreateRequestDto, Boar
                         .seq(board.getSeq())
                         .title(board.getTitle())
                         .content(board.getContent())
-                        .status(board.getStatus())
+                        .status(BoardStatus.UNREGISTERED)
+                        .created(board.getCreated())
                         .build()))
                 .map(board -> ResponseDto.OK(BoardDeleteResponseDto.builder()
                         .seq(board.getSeq())
