@@ -85,6 +85,24 @@
         </div>
     </div>
 </div>
+
+<div id="modal-confirm">
+    <div id="modal-confirm-layer">
+        <div class="modal-confirm-content" id="modal-confirm-content">
+            <div class="modal-confirm-text-field">
+                <div class="modal-confirm-text">수정중인 게시글이 있습니다.<br>취소 하시겠습니까?</div>
+            </div>
+            <div class="modal-confirm-btn-field">
+                <div class="modal-confirm-y-field">
+                    <div class="modal-confirm-y">확인</div>
+                </div>
+                <div class="modal-confirm-n-field">
+                    <div class="modal-confirm-n">취소</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 <script src="/js/board/main.js"></script>
 <script src="/js/board/ajax.js"></script>

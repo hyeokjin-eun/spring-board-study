@@ -402,6 +402,85 @@ a {
     padding-left: 15px;
 }
 
+#modal-confirm {
+    display: none;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 14;
+}
+
+#modal-confirm #modal-confirm-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 13;
+    display: flex;
+}
+
+.modal-confirm-content {
+    top: 50%;
+    position: relative;
+    width: 200px;
+    height: 150px;
+    background-color: white;
+    margin: 0 auto;
+    z-index: 15;
+    border-radius: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-confirm-text-field {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-confirm-text {
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+
+.modal-confirm-btn-field {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    height: 50px;
+}
+
+.modal-confirm-y-field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-bottom-left-radius: 15px;
+    border-right: 1px solid #ddd;
+}
+
+.modal-confirm-y {
+    width: 100%;
+    text-align: center;
+    color: red;
+}
+
+.modal-confirm-n-field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-bottom-right-radius: 15px;
+}
+
+.modal-confirm-n {
+    width: 100%;
+    text-align: center;
+}
+
 @media (min-width: 1024px) {
     .section-center {
         width: 650px;

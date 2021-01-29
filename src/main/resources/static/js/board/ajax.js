@@ -1,5 +1,7 @@
 (() => {
     let boardIdentityKey = 0;
+    let beforeBoardIdentityKey = 0;
+    let beforeBoardElement = null;
     let updating = false;
 
     function textarea_resize(target) {
@@ -8,6 +10,12 @@
     }
 
     function modalOpen(target) {
+        if (updating) {
+            beforeBoardIdentityKey = target.dataset.identity;
+            beforeBoardElement = target;
+            modalConfirmOpen();
+            return;
+        }
         document.body.style.overflowY = 'hidden';
         document.querySelector(`#modal`).style.display = `block`;
 
@@ -21,6 +29,22 @@
     function modalClose() {
         document.body.style.overflowY = 'auto';
         document.querySelector(`#modal`).style.display = `none`;
+    }
+
+    function modalConfirmOpen() {
+        modalClose();
+        document.body.style.overflowY = 'hidden';
+        document.querySelector(`#modal-confirm`).style.display = `block`;
+
+        let element = document.querySelector(`#modal-confirm-content`);
+        let elementHeight = element.offsetHeight;
+        let windowHeight = window.innerHeight;
+        element.style.top = `${((parseInt(windowHeight) - parseInt(elementHeight)) / 2)}px`;
+    }
+
+    function modalConfirmClose() {
+        document.body.style.overflowY = 'auto';
+        document.querySelector(`#modal-confirm`).style.display = `none`;
     }
 
     function timeForToday(value) {
@@ -77,11 +101,7 @@
                 updating = false;
                 document.querySelector(`#board-identity-${boardIdentityKey} .board-title-strong`).innerText = response.data.title;
                 document.querySelector(`#board-identity-${boardIdentityKey} .board-content-strong`).innerText = response.data.content;
-                document.querySelector(`#board-identity-${boardIdentityKey} .board-title-strong`).style.display = `block`;
-                document.querySelector(`#board-identity-${boardIdentityKey} .board-update-title-field`).style.display = `none`;
-                document.querySelector(`#board-identity-${boardIdentityKey} .board-content-strong`).style.display = `block`;
-                document.querySelector(`#board-identity-${boardIdentityKey} .board-update-content-field`).style.display = `none`;
-                document.querySelector(`#board-identity-${boardIdentityKey} .board-update-content-btn-field`).style.display = 'none';
+                update_cancel();
             },
             error: function(error) {
                 console.log(error);
@@ -312,15 +332,32 @@
         document.querySelector(`#board-identity-${boardIdentityKey} .board-update-title-input`).focus();
     }
 
+    function update_cancel() {
+        updating = false;
+        let strongTitle = document.querySelector(`#board-identity-${boardIdentityKey} .board-title-strong`).innerText;
+        let strongContent = document.querySelector(`#board-identity-${boardIdentityKey} .board-content-strong`).innerText;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-update-title-input`).value = strongTitle;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-update-content-input`).value = strongContent;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-title-strong`).style.display = `block`;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-update-title-field`).style.display = `none`;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-content-strong`).style.display = `block`;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-update-content-field`).style.display = `none`;
+        document.querySelector(`#board-identity-${boardIdentityKey} .board-update-content-btn-field`).style.display = 'none';
+    }
+
     $().ready(function () {
         list();
         document.querySelector('#board-create-btn').addEventListener('click', create);
         document.querySelector('#modal-layer').addEventListener('click', modalClose);
+        document.querySelector('#modal-confirm-layer').addEventListener('click', modalConfirmClose);
         window.addEventListener('resize', () => {
             let element = document.querySelector(`#modal-content`);
+            let element_confirm = document.querySelector(`#modal-confirm-content`);
             let elementHeight = element.offsetHeight;
+            let element_confirmHeight = element_confirm.offsetHeight;
             let windowHeight = window.innerHeight;
             element.style.top = `${((parseInt(windowHeight) - parseInt(elementHeight)) / 2)}px`;
+            element_confirm.style.top = `${((parseInt(windowHeight) - parseInt(element_confirmHeight)) / 2)}px`;
         })
 
         document.querySelector(`.board-update-btn-field`).addEventListener(`click`, (event) => {
@@ -344,5 +381,17 @@
         document.querySelector(`#board-create-content`).addEventListener(`keyup`, (event) => {
             textarea_resize(event.target);
         });
+
+        document.querySelector(`.modal-confirm-y-field`).addEventListener('click', (event) => {
+            update_cancel()
+            modalConfirmClose();
+            modalOpen(beforeBoardElement);
+            event.stopPropagation();
+        });
+
+        document.querySelector(`.modal-confirm-n-field`).addEventListener('click', (event) => {
+            modalConfirmClose();
+            event.stopPropagation();
+        })
     });
 })()
