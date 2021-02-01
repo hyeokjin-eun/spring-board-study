@@ -23,7 +23,7 @@ public class User {
     @Column(columnDefinition = "VARCHAR(100) COMMENT '아이디'", nullable = false)
     private String id;
 
-    @Column(columnDefinition = "VARCHAR(100) COMMENT '비밀번호'", nullable = false)
+    @Column(columnDefinition = "VARCHAR(100) COMMENT '비밀 번호'", nullable = false)
     private String password;
 
     @Column(columnDefinition = "VARCHAR(100) COMMENT '이메일'", nullable = false)
