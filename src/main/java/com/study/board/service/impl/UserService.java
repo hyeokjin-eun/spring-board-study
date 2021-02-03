@@ -9,6 +9,7 @@ import com.study.board.service.BaseService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,6 +17,13 @@ public class UserService extends BaseService<User, UserCreateRequestDto, UserUpd
 
     @Override
     public ResponseDto<UserCreateResponseDto> create(UserCreateRequestDto userCreateRequestDto) {
+        User user = User.builder()
+                .id(userCreateRequestDto.getId())
+                .password(userCreateRequestDto.getPassword())
+                .email(userCreateRequestDto.getEmail())
+                .created(LocalDateTime.now())
+                .updated(LocalDateTime.now())
+                .build();
         return null;
     }
 
