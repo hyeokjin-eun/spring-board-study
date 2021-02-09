@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Component
@@ -22,12 +23,12 @@ public abstract class BaseController<Entity, CreateReq, UpdateReq, ListRes, Crea
     }
 
     @PostMapping("")
-    public ResponseDto<CreateRes> create(@RequestBody final CreateReq createReq) {
+    public ResponseDto<CreateRes> create(@Valid @RequestBody final CreateReq createReq) {
         return baseService.create(createReq);
     }
 
     @PutMapping("")
-    public ResponseDto<UpdateRes> update(@RequestBody final UpdateReq updateReq) {
+    public ResponseDto<UpdateRes> update(@Valid @RequestBody final UpdateReq updateReq) {
         return baseService.update(updateReq);
     }
 

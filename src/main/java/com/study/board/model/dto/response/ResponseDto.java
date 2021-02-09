@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ResponseDto<T> {
     private LocalDateTime transactionTime;
 
@@ -40,6 +41,15 @@ public class ResponseDto<T> {
                 .transactionTime(LocalDateTime.now())
                 .resultCode("ERROR")
                 .description(description)
+                .build();
+    }
+
+    public static <T> ResponseDto<T> ERROR(String description, Exception exception) {
+        return (ResponseDto<T>) ResponseDto.builder()
+                .transactionTime(LocalDateTime.now())
+                .resultCode("ERROR")
+                .description(description)
+                .data(exception.getMessage())
                 .build();
     }
 }

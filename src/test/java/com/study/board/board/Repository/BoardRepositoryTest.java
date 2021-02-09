@@ -1,4 +1,4 @@
-package com.study.board.Repository;
+package com.study.board.board.Repository;
 
 import com.study.board.model.entity.Board;
 import com.study.board.model.enumClass.BoardStatus;
