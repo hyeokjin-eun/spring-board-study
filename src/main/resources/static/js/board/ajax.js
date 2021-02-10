@@ -118,9 +118,6 @@
             success: function(response) {
                 let html = ``;
                 if (response === null || response.data === null || response.data === 'undefined') {
-                    // TODO list length == 0 일때 list 에 일상을 공유해보세요 문구 출력
-                    html += ``;
-                    document.querySelector(`.section-board`).innerHTML = html;
                     return;
                 }
 

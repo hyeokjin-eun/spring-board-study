@@ -17,4 +17,16 @@ public class GlobalExceptionHandler {
     public ResponseDto<String> badRequestException() {
         return ResponseDto.ERROR("잘못된 파라미터 방식입니다.");
     }
+
+    @ExceptionHandler(BoardNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseDto<String> boardNotFoundException() {
+        return ResponseDto.ERROR("게시글을 찾을 수 없습니다.");
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseDto<String> userNotFoundException() {
+        return ResponseDto.ERROR("사용자를 찾을 수 없습니다.");
+    }
 }

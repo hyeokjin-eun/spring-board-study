@@ -1,4 +1,4 @@
-package com.study.board;
+package com.study.board.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
