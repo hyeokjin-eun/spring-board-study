@@ -1,5 +1,6 @@
 package com.study.board.model.dto.request.user;
 
+import com.study.board.model.enumClass.UserRole;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -28,4 +29,7 @@ public class UserUpdateRequestDto {
     @NotEmpty
     @Email
     private String email;
+
+    @NotNull
+    private UserRole role;
 }

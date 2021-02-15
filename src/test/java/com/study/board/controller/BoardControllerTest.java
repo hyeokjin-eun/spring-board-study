@@ -7,11 +7,14 @@ import com.study.board.model.dto.response.board.*;
 import com.study.board.model.enumClass.BoardStatus;
 import com.study.board.model.exception.BoardNotFoundException;
 import com.study.board.service.impl.BoardService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -40,19 +43,23 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
     @Nested
     @DisplayName("게시글 생성")
     class create {
-        @ParameterizedTest
-        @CsvSource(value = {"'TITLE1', 'CONTENT1'", "'TITLE2', 'CONTENT2'"})
-        @DisplayName("정상 동작")
-        public void createTest(String title, String content) throws Exception {
-            BoardCreateRequestDto boardCreateRequestDto = BoardCreateRequestDto.builder()
-                    .title(title)
-                    .content(content)
-                    .build();
+        private BoardCreateRequestDto boardCreateRequestDto;
 
+        @BeforeEach
+        public void setUp() {
+            boardCreateRequestDto = BoardCreateRequestDto.builder()
+                    .title("TITLE1")
+                    .content("CONTENT1")
+                    .build();
+        }
+
+        @Test
+        @DisplayName("정상 동작")
+        public void createTest() throws Exception {
             given(boardService.create(any())).willReturn(ResponseDto.OK(BoardCreateResponseDto.builder()
                     .seq(1L)
-                    .title(title)
-                    .content(content)
+                    .title(boardCreateRequestDto.getTitle())
+                    .content(boardCreateRequestDto.getContent())
                     .status(BoardStatus.REGISTERED)
                     .created(LocalDateTime.now())
                     .build()));
@@ -62,20 +69,17 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
                     .content(objectMapper.writeValueAsString(boardCreateRequestDto)))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.title").value(title))
-                    .andExpect(jsonPath("$.data.content").value(content));
+                    .andExpect(jsonPath("$.data.title").value(boardCreateRequestDto.getTitle()))
+                    .andExpect(jsonPath("$.data.content").value(boardCreateRequestDto.getContent()));
 
             verify(boardService).create(any());
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"'', 'CONTENT1'", ", 'CONTENT2'"})
+        @NullAndEmptySource
         @DisplayName("제목 파라미터 검증")
-        public void createTitleParameterTest(String title, String content) throws Exception {
-            BoardCreateRequestDto boardCreateRequestDto = BoardCreateRequestDto.builder()
-                    .title(title)
-                    .content(content)
-                    .build();
+        public void createTitleParameterTest(String title) throws Exception {
+            boardCreateRequestDto.setTitle(title);
 
             mockMvc.perform(post("/board")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -86,13 +90,10 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"'TITLE1', ''", "'TITLE2', "})
+        @NullAndEmptySource
         @DisplayName("내용 파라미터 검증")
-        public void createContentParameterTest(String title, String content) throws Exception {
-            BoardCreateRequestDto boardCreateRequestDto = BoardCreateRequestDto.builder()
-                    .title(title)
-                    .content(content)
-                    .build();
+        public void createContentParameterTest(String content) throws Exception {
+            boardCreateRequestDto.setContent(content);
 
             mockMvc.perform(post("/board")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -106,22 +107,26 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
     @Nested
     @DisplayName("게시글 수정")
     class update {
-        @ParameterizedTest
-        @CsvSource(value = {"1, 'TITLE UPDATE 1', 'CONTENT UPDATE 1', 'UNREGISTERED'"})
-        @DisplayName("정상 동작")
-        public void updateTest(Long seq, String title, String content, BoardStatus boardStatus) throws Exception {
-            BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
-                    .build();
+        private BoardUpdateRequestDto boardUpdateRequestDto;
 
+        @BeforeEach
+        public void setUp() {
+            boardUpdateRequestDto = BoardUpdateRequestDto.builder()
+                    .seq(1L)
+                    .title("TITLE UPDATE 1")
+                    .content("CONTENT UPDATE 1")
+                    .status(BoardStatus.UNREGISTERED)
+                    .build();
+        }
+
+        @Test
+        @DisplayName("정상 동작")
+        public void updateTest() throws Exception {
             given(boardService.update(any())).willReturn(ResponseDto.OK(BoardUpdateResponseDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
+                    .seq(boardUpdateRequestDto.getSeq())
+                    .title(boardUpdateRequestDto.getTitle())
+                    .content(boardUpdateRequestDto.getContent())
+                    .status(boardUpdateRequestDto.getStatus())
                     .created(LocalDateTime.now())
                     .build()));
 
@@ -130,24 +135,19 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
                     .content(objectMapper.writeValueAsString(boardUpdateRequestDto)))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.seq").value(seq))
-                    .andExpect(jsonPath("$.data.title").value(title))
-                    .andExpect(jsonPath("$.data.content").value(content))
-                    .andExpect(jsonPath("$.data.status").value(boardStatus.toString()));
+                    .andExpect(jsonPath("$.data.seq").value(boardUpdateRequestDto.getSeq()))
+                    .andExpect(jsonPath("$.data.title").value(boardUpdateRequestDto.getTitle()))
+                    .andExpect(jsonPath("$.data.content").value(boardUpdateRequestDto.getContent()))
+                    .andExpect(jsonPath("$.data.status").value(boardUpdateRequestDto.getStatus().toString()));
 
             verify(boardService).update(any());
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"0, 'TITLE UPDATE 1', 'CONTENT UPDATE 1', 'UNREGISTERED'"})
+        @CsvSource(value = {"0"})
         @DisplayName("게시글 미존재")
-        public void updateBoardNotFound(Long seq, String title, String content, BoardStatus boardStatus) throws Exception {
-            BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
-                    .build();
+        public void updateBoardNotFound(Long seq) throws Exception {
+            boardUpdateRequestDto.setSeq(seq);
 
             given(boardService.update(any())).willThrow(BoardNotFoundException.class);
 
@@ -161,15 +161,10 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {", 'TITLE UPDATE 1', 'CONTENT UPDATE 1', 'UNREGISTERED'"})
+        @NullSource
         @DisplayName("SEQ 파라미터 검증")
-        public void updateSeqParameterTest(Long seq, String title, String content, BoardStatus boardStatus) throws Exception {
-            BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
-                    .build();
+        public void updateSeqParameterTest(Long seq) throws Exception {
+            boardUpdateRequestDto.setSeq(seq);
 
             mockMvc.perform(put("/board")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -180,15 +175,10 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"1, , 'CONTENT UPDATE 1', 'UNREGISTERED'", "1, '', 'CONTENT UPDATE 1', 'UNREGISTERED'"})
+        @NullAndEmptySource
         @DisplayName("제목 파라미터 검증")
-        public void updateTitleParameterTest(Long seq, String title, String content, BoardStatus boardStatus) throws Exception {
-            BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
-                    .build();
+        public void updateTitleParameterTest(String title) throws Exception {
+            boardUpdateRequestDto.setTitle(title);
 
             mockMvc.perform(put("/board")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -199,15 +189,10 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"1, 'TITLE UPDATE 1', , 'UNREGISTERED'", "1, 'TITLE UPDATE 1', '', 'UNREGISTERED'"})
+        @NullAndEmptySource
         @DisplayName("내용 파라미터 검증")
-        public void updateContentParameterTest(Long seq, String title, String content, BoardStatus boardStatus) throws Exception {
-            BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
-                    .build();
+        public void updateContentParameterTest(String content) throws Exception {
+            boardUpdateRequestDto.setContent(content);
 
             mockMvc.perform(put("/board")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -218,15 +203,10 @@ public class BoardControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"1, 'TITLE UPDATE 1', 'CONTENT UPDATE 1', "})
+        @NullSource
         @DisplayName("상태 파라미터 검증")
-        public void updateStatusParameterTest(Long seq, String title, String content, BoardStatus boardStatus) throws Exception {
-            BoardUpdateRequestDto boardUpdateRequestDto = BoardUpdateRequestDto.builder()
-                    .seq(seq)
-                    .title(title)
-                    .content(content)
-                    .status(boardStatus)
-                    .build();
+        public void updateStatusParameterTest(BoardStatus boardStatus) throws Exception {
+            boardUpdateRequestDto.setStatus(boardStatus);
 
             mockMvc.perform(put("/board")
                     .contentType(MediaType.APPLICATION_JSON)

@@ -4,13 +4,17 @@ import com.study.board.model.dto.request.user.UserCreateRequestDto;
 import com.study.board.model.dto.request.user.UserUpdateRequestDto;
 import com.study.board.model.dto.response.ResponseDto;
 import com.study.board.model.dto.response.user.*;
+import com.study.board.model.enumClass.UserRole;
 import com.study.board.model.exception.UserNotFoundException;
 import com.study.board.service.impl.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -38,21 +42,26 @@ public class UserControllerTest extends ControllerTestBaseConfig {
     @Nested
     @DisplayName("사용자 생성")
     class create {
+        private UserCreateRequestDto userCreateRequestDto;
 
-        @ParameterizedTest
-        @CsvSource(value = {"'xptmxm1', 'xptmxm1', 'xptmxm1@email.com'", "'xptmxm2', 'xptmxm2', 'xptmxm2@email.com'"})
-        @DisplayName("정상 동작")
-        public void createTest(String id, String password, String email) throws Exception {
-            UserCreateRequestDto userCreateRequestDto = UserCreateRequestDto.builder()
-                    .id(id)
-                    .password(password)
-                    .email(email)
+        @BeforeEach
+        public void setUp() {
+            userCreateRequestDto = UserCreateRequestDto.builder()
+                    .id("xptmxm1")
+                    .password("xptmxm1")
+                    .email("xptmxm1@email.com")
+                    .role(UserRole.USER)
                     .build();
+        }
 
+        @Test
+        @DisplayName("정상 동작")
+        public void createTest() throws Exception {
             given(userService.create(any())).willReturn(ResponseDto.OK(UserCreateResponseDto.builder()
                     .seq(1L)
-                    .id(id)
-                    .email(email)
+                    .id(userCreateRequestDto.getId())
+                    .email(userCreateRequestDto.getEmail())
+                    .role(userCreateRequestDto.getRole())
                     .created(LocalDateTime.now())
                     .build()));
 
@@ -66,14 +75,10 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {", 'xptmxm1', 'xptmxm1@email.com'", "'', 'xptmxm2', 'xptmxm2@email.com'"})
+        @NullAndEmptySource
         @DisplayName("ID 파라미터 검증")
-        public void createIdParameterTest(String id, String password, String email) throws Exception {
-            UserCreateRequestDto userCreateRequestDto = UserCreateRequestDto.builder()
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void createIdParameterTest(String id) throws Exception {
+            userCreateRequestDto.setId(id);
 
             mockMvc.perform(post("/user")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -83,14 +88,10 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"'xptmxm1', , 'xptmxm1@email.com'", "'xptmxm2', '', 'xptmxm2@email.com'"})
+        @NullAndEmptySource
         @DisplayName("비밀 번호 파라미터 검증")
-        public void createPasswordParameterTest(String id, String password, String email) throws Exception {
-            UserCreateRequestDto userCreateRequestDto = UserCreateRequestDto.builder()
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void createPasswordParameterTest(String password) throws Exception {
+            userCreateRequestDto.setPassword(password);
 
             mockMvc.perform(post("/user")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -100,14 +101,23 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"'xptmxm1', 'xptmxm1', ", "'xptmxm2', 'xptmxm2', ''"})
+        @NullAndEmptySource
         @DisplayName("이메일 파라미터 검증")
-        public void createEmailParameterTest(String id, String password, String email) throws Exception {
-            UserCreateRequestDto userCreateRequestDto = UserCreateRequestDto.builder()
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void createEmailParameterTest(String email) throws Exception {
+            userCreateRequestDto.setEmail(email);
+
+            mockMvc.perform(post("/user")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(userCreateRequestDto)))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+        }
+
+        @ParameterizedTest
+        @NullSource
+        @DisplayName("권한 파라미터 검증")
+        public void createRoleParameterTest(UserRole role) throws Exception {
+            userCreateRequestDto.setRole(role);
 
             mockMvc.perform(post("/user")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -120,23 +130,28 @@ public class UserControllerTest extends ControllerTestBaseConfig {
     @Nested
     @DisplayName("사용자 수정")
     class update {
+        private UserUpdateRequestDto userUpdateRequestDto;
 
-        @ParameterizedTest
-        @CsvSource(value = {"1, 'xptmxm1', 'xptmxm1', 'xptmxm1@email.com'", "2, 'xptmxm2', 'xptmxm2', 'xptmxm2@email.com'"})
-        @DisplayName("정상 동작")
-        public void updateTest(Long seq, String id, String password, String email) throws Exception {
-            UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
+        @BeforeEach
+        public void setUp() {
+            userUpdateRequestDto = UserUpdateRequestDto.builder()
+                    .seq(1L)
+                    .id("xptmxm1")
+                    .password("xptmxm1")
+                    .email("xptmxm1@email.com")
+                    .role(UserRole.USER)
                     .build();
+        }
 
+        @Test
+        @DisplayName("정상 동작")
+        public void updateTest() throws Exception {
             given(userService.update(any())).willReturn(ResponseDto.OK(UserUpdateResponseDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
+                    .seq(userUpdateRequestDto.getSeq())
+                    .id(userUpdateRequestDto.getId())
+                    .password(userUpdateRequestDto.getPassword())
+                    .email(userUpdateRequestDto.getEmail())
+                    .role(userUpdateRequestDto.getRole())
                     .created(LocalDateTime.now())
                     .updated(LocalDateTime.now())
                     .build()));
@@ -146,24 +161,20 @@ public class UserControllerTest extends ControllerTestBaseConfig {
                     .content(objectMapper.writeValueAsString(userUpdateRequestDto)))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.seq").value(seq))
-                    .andExpect(jsonPath("$.data.id").value(id))
-                    .andExpect(jsonPath("$.data.password").value(password))
-                    .andExpect(jsonPath("$.data.email").value(email));
+                    .andExpect(jsonPath("$.data.seq").value(userUpdateRequestDto.getSeq()))
+                    .andExpect(jsonPath("$.data.id").value(userUpdateRequestDto.getId()))
+                    .andExpect(jsonPath("$.data.password").value(userUpdateRequestDto.getPassword()))
+                    .andExpect(jsonPath("$.data.email").value(userUpdateRequestDto.getEmail()))
+                    .andExpect(jsonPath("$.data.role").value(userUpdateRequestDto.getRole().toString()));
 
             verify(userService).update(any());
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"0, 'xptmxm1', 'xptmxm1', 'xptmxm1@email.com'"})
+        @CsvSource(value = {"0"})
         @DisplayName("사용자 미존재")
-        public void updateUserNotFound(Long seq, String id, String password, String email) throws Exception {
-            UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void updateUserNotFound(Long seq) throws Exception {
+            userUpdateRequestDto.setSeq(seq);
 
             given(userService.update(any())).willThrow(UserNotFoundException.class);
 
@@ -178,15 +189,10 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {", 'xptmxm1', 'xptmxm1', 'xptmxm1@email.com'"})
+        @NullSource
         @DisplayName("SEQ 파라미터 검증")
-        public void updateSeqParameterTest(Long seq, String id, String password, String email) throws Exception {
-            UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void updateSeqParameterTest(Long seq) throws Exception {
+            userUpdateRequestDto.setSeq(seq);
 
             mockMvc.perform(put("/user")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -196,15 +202,10 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"1, , 'xptmxm1', 'xptmxm1@email.com'", "2, '', 'xptmxm2', 'xptmxm2@email.com'"})
+        @NullAndEmptySource
         @DisplayName("ID 파라미터 검증")
-        public void updateIdParameterTest(Long seq, String id, String password, String email) throws Exception {
-            UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void updateIdParameterTest(String id) throws Exception {
+            userUpdateRequestDto.setId(id);
 
             mockMvc.perform(put("/user")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -214,15 +215,10 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"1, 'xptmxm1', , 'xptmxm1@email.com'", "2, 'xptmxm2', '', 'xptmxm2@email.com'"})
+        @NullAndEmptySource
         @DisplayName("비밀 번호 파라미터 검증")
-        public void updatePasswordParameterTest(Long seq, String id, String password, String email) throws Exception {
-            UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        public void updatePasswordParameterTest(String password) throws Exception {
+            userUpdateRequestDto.setPassword(password);
 
             mockMvc.perform(put("/user")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -232,15 +228,10 @@ public class UserControllerTest extends ControllerTestBaseConfig {
         }
 
         @ParameterizedTest
-        @CsvSource(value = {"1, 'xptmxm1', 'xptmxm1', ", "2, 'xptmxm2', 'xptmxm2', ''", "3, 'xptmxm3', 'xptmxm3', 'xptmxm3'"})
-        @DisplayName("비밀 번호 파라미터 검증")
-        public void updateEmailParameterTest(Long seq, String id, String password, String email) throws Exception {
-            UserUpdateRequestDto userUpdateRequestDto = UserUpdateRequestDto.builder()
-                    .seq(seq)
-                    .id(id)
-                    .password(password)
-                    .email(email)
-                    .build();
+        @NullAndEmptySource
+        @DisplayName("이메일 파라미터 검증")
+        public void updateEmailParameterTest(String email) throws Exception {
+            userUpdateRequestDto.setEmail(email);
 
             mockMvc.perform(put("/user")
                     .contentType(MediaType.APPLICATION_JSON)

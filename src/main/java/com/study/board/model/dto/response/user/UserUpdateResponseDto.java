@@ -1,5 +1,6 @@
 package com.study.board.model.dto.response.user;
 
+import com.study.board.model.enumClass.UserRole;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +19,8 @@ public class UserUpdateResponseDto {
     private String password;
 
     private String email;
+
+    private UserRole role;
 
     private LocalDateTime created;
 
