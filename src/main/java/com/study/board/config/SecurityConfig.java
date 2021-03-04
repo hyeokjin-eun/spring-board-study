@@ -1,8 +1,10 @@
 package com.study.board.config;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import com.study.board.service.impl.UserDetailService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -15,15 +17,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
+    @Autowired
+    private UserDetailService userDetailService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        String password = passwordEncoder().encode("1111");
-        auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
+        auth.userDetailsService(userDetailService);
+    }
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/css/**", "/img/**", "/js/**", "/h2-console/**");
     }
 
     @Bean
@@ -35,12 +39,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/main").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/user").permitAll()
+                .antMatchers(HttpMethod.GET, "/", "/login", "/register").permitAll()
+                .antMatchers(HttpMethod.GET, "/main").hasRole("USER")
                 .anyRequest().authenticated()
 
         .and()
-                .formLogin()
+                .csrf()
+                .ignoringAntMatchers("/h2-console/**")
+                .ignoringAntMatchers("/user")
+
+        .and()
+                .headers()
+                .frameOptions().sameOrigin()
+        .and()
+            .formLogin()
+            .loginPage("/login")
         ;
     }
 }

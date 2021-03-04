@@ -30,4 +30,8 @@ public class UserCreateRequestDto {
 
     @NotNull
     private UserRole role;
+
+    @NotNull
+    @NotEmpty
+    private String username;
 }

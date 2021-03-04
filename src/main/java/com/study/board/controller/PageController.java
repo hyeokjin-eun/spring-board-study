@@ -16,4 +16,14 @@ public class PageController {
     public ModelAndView board() {
         return new ModelAndView("board/main");
     }
+
+    @GetMapping("/login")
+    public ModelAndView login() {
+        return new ModelAndView("common/login");
+    }
+
+    @GetMapping("/register")
+    public ModelAndView register() {
+        return new ModelAndView("common/register");
+    }
 }

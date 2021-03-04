@@ -22,6 +22,8 @@ public class UserUpdateResponseDto {
 
     private UserRole role;
 
+    private String username;
+
     private LocalDateTime created;
 
     private LocalDateTime updated;

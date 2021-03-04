@@ -32,4 +32,8 @@ public class UserUpdateRequestDto {
 
     @NotNull
     private UserRole role;
+
+    @NotNull
+    @NotEmpty
+    private String username;
 }

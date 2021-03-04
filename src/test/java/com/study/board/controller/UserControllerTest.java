@@ -50,7 +50,8 @@ public class UserControllerTest extends ControllerTestBaseConfig {
                     .id("xptmxm1")
                     .password("xptmxm1")
                     .email("xptmxm1@email.com")
-                    .role(UserRole.USER)
+                    .role(UserRole.ROLE_USER)
+                    .username("xptmxm1")
                     .build();
         }
 
@@ -62,6 +63,7 @@ public class UserControllerTest extends ControllerTestBaseConfig {
                     .id(userCreateRequestDto.getId())
                     .email(userCreateRequestDto.getEmail())
                     .role(userCreateRequestDto.getRole())
+                    .username(userCreateRequestDto.getUsername())
                     .created(LocalDateTime.now())
                     .build()));
 
@@ -125,6 +127,20 @@ public class UserControllerTest extends ControllerTestBaseConfig {
                     .andDo(print())
                     .andExpect(status().isBadRequest());
         }
+
+        @ParameterizedTest
+        @NullAndEmptySource
+        @DisplayName("성명 파라미터 검증")
+        public void createUsernameParameterTest(String username) throws Exception {
+            userCreateRequestDto.setUsername(username);
+
+            mockMvc.perform(post("/user")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(userCreateRequestDto)))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.resultCode").value("ERROR"));
+        }
     }
 
     @Nested
@@ -139,7 +155,7 @@ public class UserControllerTest extends ControllerTestBaseConfig {
                     .id("xptmxm1")
                     .password("xptmxm1")
                     .email("xptmxm1@email.com")
-                    .role(UserRole.USER)
+                    .role(UserRole.ROLE_USER)
                     .build();
         }
 

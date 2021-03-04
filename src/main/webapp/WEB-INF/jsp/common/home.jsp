@@ -15,7 +15,7 @@
         <nav class="home-nav">
             <div class="home-nav-links">
                 <a href="#" class="product-name">Toystagram</a>
-                <a href="#">Login</a>
+                <a href="/login">Login</a>
             </div>
         </nav>
 

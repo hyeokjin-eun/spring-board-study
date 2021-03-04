@@ -8,6 +8,7 @@ import com.study.board.model.entity.User;
 import com.study.board.model.exception.UserNotFoundException;
 import com.study.board.service.BaseService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,13 +18,21 @@ import java.util.Optional;
 @Service
 public class UserService extends BaseService<User, UserCreateRequestDto, UserUpdateRequestDto, UserListResponseDto, UserCreateResponseDto, UserUpdateResponseDto, UserDeleteResponseDto, UserDetailResponseDto> {
 
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     public ResponseDto<UserCreateResponseDto> create(final UserCreateRequestDto userCreateRequestDto) {
         return Optional.of(
                 baseRepository.save(User.builder()
                         .id(userCreateRequestDto.getId())
-                        .password(userCreateRequestDto.getPassword())
+                        .password(passwordEncoder.encode(userCreateRequestDto.getPassword()))
                         .email(userCreateRequestDto.getEmail())
+                        .role(userCreateRequestDto.getRole())
+                        .username(userCreateRequestDto.getUsername())
                         .created(LocalDateTime.now())
                         .updated(LocalDateTime.now())
                         .build()))
@@ -31,6 +40,8 @@ public class UserService extends BaseService<User, UserCreateRequestDto, UserUpd
                         .seq(user.getSeq())
                         .id(user.getId())
                         .email(user.getEmail())
+                        .role(user.getRole())
+                        .username(user.getUsername())
                         .created(user.getCreated())
                         .build()))
                 .orElseThrow(UserNotFoundException::new);
@@ -41,8 +52,10 @@ public class UserService extends BaseService<User, UserCreateRequestDto, UserUpd
         return baseRepository.findById(userUpdateRequestDto.getSeq())
                 .map(user -> user
                         .setId(userUpdateRequestDto.getId())
-                        .setPassword(userUpdateRequestDto.getPassword())
+                        .setPassword(passwordEncoder.encode(userUpdateRequestDto.getPassword()))
                         .setEmail(userUpdateRequestDto.getEmail())
+                        .setRole(userUpdateRequestDto.getRole())
+                        .setUsername(userUpdateRequestDto.getUsername())
                         .setUpdated(LocalDateTime.now()))
                 .map(user -> baseRepository.save(user))
                 .map(user -> ResponseDto.OK(UserUpdateResponseDto.builder()
@@ -50,6 +63,8 @@ public class UserService extends BaseService<User, UserCreateRequestDto, UserUpd
                         .id(user.getId())
                         .password(user.getPassword())
                         .email(user.getEmail())
+                        .role(user.getRole())
+                        .username(user.getUsername())
                         .created(user.getCreated())
                         .updated(user.getUpdated())
                         .build()))

@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 @ExtendWith(SpringExtension.class)
-public class ControllerTestBaseConfig{
+public class ControllerTestBaseConfig {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
