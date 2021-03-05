@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,7 +16,12 @@
         <nav class="home-nav">
             <div class="home-nav-links">
                 <a href="#" class="product-name">Toystagram</a>
-                <a href="/login">Login</a>
+                <sec:authorize access="isAnonymous()">
+                    <a href="/login">Login</a>
+                </sec:authorize>
+                <sec:authorize access="isAuthenticated()">
+                    <a href="/logout">Logout</a>
+                </sec:authorize>
             </div>
         </nav>
 

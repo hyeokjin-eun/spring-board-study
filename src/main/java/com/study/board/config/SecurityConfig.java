@@ -1,10 +1,9 @@
 package com.study.board.config;
 
-import com.study.board.service.impl.UserDetailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -17,12 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserDetailService userDetailService;
-
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailService);
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        return new CustomAuthenticationProvider();
     }
 
     @Override
@@ -39,22 +40,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/user").permitAll()
+                .antMatchers("/main", "/board**").hasRole("USER")
                 .antMatchers(HttpMethod.GET, "/", "/login", "/register").permitAll()
-                .antMatchers(HttpMethod.GET, "/main").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/user", "/authenticate").permitAll()
                 .anyRequest().authenticated()
 
         .and()
-                .csrf()
-                .ignoringAntMatchers("/h2-console/**")
-                .ignoringAntMatchers("/user")
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/authenticate")
+                .usernameParameter("id")
+                .passwordParameter("pw")
+                .defaultSuccessUrl("/main")
+                .permitAll()
 
         .and()
+                .logout()
+                .logoutSuccessUrl("/login")
+
+        .and()
+                .csrf()
+
+        .disable()
                 .headers()
                 .frameOptions().sameOrigin()
-        .and()
-            .formLogin()
-            .loginPage("/login")
         ;
     }
 }
